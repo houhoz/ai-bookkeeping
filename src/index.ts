@@ -33,7 +33,7 @@ app.post('/', async (c) => {
     "amount": 数字, // 交易金额，只需数字，不含货币符号
     "class": "类别", // 支出类别，如"餐饮"、"交通"、"购物"等
     "date": "YYYY-MM-DD HH:MM:SS", // 交易时间，标准格式
-    "merchant": "商户名称" // 商户名称
+    "event": "事件名称" // 事件名称
   }
   
   如果某项信息在截图中无法找到，请在相应字段填入null。对于"class"字段，请根据商户名称做出最合理的判断。
@@ -56,9 +56,33 @@ app.post('/', async (c) => {
     response_format: { type: 'json_object' },
   });
 
-  console.log(completion.choices[0].message.content);
+  const content = completion.choices[0].message.content
+
+  if (content) {
+    const res = JSON.parse(content);
+    try {
+      await fetch(process.env.FEISHU_WEBHOOK_URL!, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(res),
+      });
+      return c.json({
+        message: '解析成功',
+      });
+    } catch (error) {
+      console.error(error);
+      return c.json({
+        message: '解析失败',
+      });
+    }
+
+    return c.json(res);
+  }
+
   return c.json({
-    message: completion.choices[0].message.content,
+    message: '解析失败',
   });
 });
 
