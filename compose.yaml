@@ -1,0 +1,12 @@
+services:
+  app:
+    image: ai-bookkeeping
+    ports:
+      - 3000:3000
+    environment:
+      - XAI_API_KEY=${XAI_API_KEY}
+    volumes:
+      - .env:/app/.env
+    build:
+      context: .
+      dockerfile: Dockerfile
