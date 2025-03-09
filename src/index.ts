@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import OpenAI from 'openai';
+import { Mistral } from '@mistralai/mistralai';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,9 +13,21 @@ const openai = new OpenAI({
   baseURL: 'https://api.x.ai/v1',
 });
 
+const apiKey = process.env.MISTRAL_API_KEY;
+const client = new Mistral({ apiKey: apiKey });
+
+
 app.post('/', async (c) => {
   const body: any = await c.req.json();
   const image = body.base64 as string;
+
+  const ocrResponse = await client.ocr.process({
+    model: "mistral-ocr-latest",
+    document: {
+      type: "image_url",
+      imageUrl: `data:image/jpeg;base64,${image}`,
+    }
+  });
 
   const completion = await openai.chat.completions.create({
     model: 'grok-2-vision-latest',
@@ -42,48 +55,14 @@ app.post('/', async (c) => {
       },
       {
         role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: {
-              url: `data:image/jpeg;base64,${body.base64}`,
-              detail: 'high',
-            },
-          },
-        ],
+        content: JSON.stringify(ocrResponse),
       },
     ],
     response_format: { type: 'json_object' },
   });
 
-  const content = completion.choices[0].message.content
-
-  if (content) {
-    const res = JSON.parse(content);
-    try {
-      await fetch(process.env.FEISHU_WEBHOOK_URL!, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(res),
-      });
-      return c.json({
-        message: '解析成功',
-      });
-    } catch (error) {
-      console.error(error);
-      return c.json({
-        message: '解析失败',
-      });
-    }
-
-    return c.json(res);
-  }
-
-  return c.json({
-    message: '解析失败',
-  });
+  const json = JSON.parse(completion.choices[0].message.content || '{}');
+  return c.json(json);
 });
 
 serve(

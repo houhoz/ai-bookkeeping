@@ -11,6 +11,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.13.8
         version: 1.13.8(hono@4.7.4)
+      '@mistralai/mistralai':
+        specifier: ^1.5.1
+        version: 1.5.1(zod@3.24.2)
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -19,7 +22,7 @@ importers:
         version: 4.7.4
       openai:
         specifier: ^4.86.2
-        version: 4.86.2
+        version: 4.86.2(zod@3.24.2)
     devDependencies:
       '@types/node':
         specifier: ^20.11.17
@@ -188,6 +191,11 @@ packages:
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
+
+  '@mistralai/mistralai@1.5.1':
+    resolution: {integrity: sha512-Ie0EH4dAO11MEXR5N2kS2cgr+ycTWvqN/yP9bKrtmUEqjdcF4i7DLxtrFMUw5l2dOPhrkX93G4SziFiATPWu2w==}
+    peerDependencies:
+      zod: '>= 3'
 
   '@types/node-fetch@2.6.12':
     resolution: {integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==}
@@ -379,6 +387,14 @@ packages:
   whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
+  zod-to-json-schema@3.24.3:
+    resolution: {integrity: sha512-HIAfWdYIt1sssHfYZFCXp4rU1w2r8hVVXYIlmoa0r0gABLs5di3RCqPU5DDROogVz1pAdYBaz7HK5n9pSUNs3A==}
+    peerDependencies:
+      zod: ^3.24.1
+
+  zod@3.24.2:
+    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+
 snapshots:
 
   '@esbuild/aix-ppc64@0.25.0':
@@ -459,6 +475,11 @@ snapshots:
   '@hono/node-server@1.13.8(hono@4.7.4)':
     dependencies:
       hono: 4.7.4
+
+  '@mistralai/mistralai@1.5.1(zod@3.24.2)':
+    dependencies:
+      zod: 3.24.2
+      zod-to-json-schema: 3.24.3(zod@3.24.2)
 
   '@types/node-fetch@2.6.12':
     dependencies:
@@ -622,7 +643,7 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  openai@4.86.2:
+  openai@4.86.2(zod@3.24.2):
     dependencies:
       '@types/node': 18.19.79
       '@types/node-fetch': 2.6.12
@@ -631,6 +652,8 @@ snapshots:
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
       node-fetch: 2.7.0
+    optionalDependencies:
+      zod: 3.24.2
     transitivePeerDependencies:
       - encoding
 
@@ -659,3 +682,9 @@ snapshots:
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
+
+  zod-to-json-schema@3.24.3(zod@3.24.2):
+    dependencies:
+      zod: 3.24.2
+
+  zod@3.24.2: {}
